@@ -1,3 +1,8 @@
+/**
+ * HTTP Servlet
+ * By Yunyi Chi
+ * */
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
@@ -6,16 +11,13 @@ import java.io.IOException;
 
 @WebServlet(name = "Servlet", value = "/Servlet")
 public class Servlet extends HttpServlet {
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
-//    }
-
+// handle Post request
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/plain");
         String urlPath = req.getPathInfo();
 
+//        check if url is null or empty
         if (urlPath == null || urlPath.isEmpty()) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             res.getWriter().write("not found url path");
@@ -23,13 +25,9 @@ public class Servlet extends HttpServlet {
         }
 
         String[] urlParts = urlPath.split("/");
-//        for (int i = 0; i < urlParts.length; i++) {
-//            System.out.println(urlParts[i]);
-//        }
 
         BufferedReader content = req.getReader();
         String returnString = ReadBigStringIn(content);
-//        System.out.println(returnString);
 
         if (!isUrlValid(urlParts)) {
             res.setStatus((HttpServletResponse.SC_NOT_FOUND));
@@ -40,15 +38,15 @@ public class Servlet extends HttpServlet {
             System.out.println("success");
         }
     }
-
+//    check if url is valid
     private boolean isUrlValid(String[] urlPath) {
-//        "", "left"
         if (    urlPath[1].equals("swipe") &&
                 (urlPath[2].equals("left") || urlPath[2].equals("right"))) {
             return true;
         }
         return false;
     }
+//    read Buffer data
     public String ReadBigStringIn(BufferedReader buffIn) throws IOException {
         StringBuilder everything = new StringBuilder();
         String line;

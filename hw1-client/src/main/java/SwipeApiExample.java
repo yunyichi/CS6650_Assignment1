@@ -1,3 +1,8 @@
+/**
+ * Test Swagger API
+ * By Yunyi Chi
+ * */
+
 import io.swagger.client.*;
 import io.swagger.client.auth.*;
 import io.swagger.client.model.*;
@@ -12,8 +17,8 @@ public class SwipeApiExample {
     public static void main(String[] args) {
         SwipeApi apiInstance = new SwipeApi();
         apiInstance.getApiClient().setBasePath(baseUrl);
-        SwipeDetails body = new SwipeDetails(); // SwipeDetails | response details
-        String leftorright = "right"; // String | Ilike or dislike user
+        SwipeDetails body = new SwipeDetails();
+        String leftorright = "right";
         try {
             ApiResponse res = apiInstance.swipeWithHttpInfo(body, leftorright);
             System.out.println(res.getStatusCode());

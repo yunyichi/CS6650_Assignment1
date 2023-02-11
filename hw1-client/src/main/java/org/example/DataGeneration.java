@@ -1,10 +1,14 @@
 package org.example;
+
+/**
+ * Generate random data for post request
+ * By Yunyi Chi
+ * */
 import io.swagger.client.*;
 import io.swagger.client.auth.*;
 import io.swagger.client.model.*;
 import io.swagger.client.api.SwipeApi;
 import java.util.Random;
-
 import java.io.File;
 import java.util.*;
 public class DataGeneration {

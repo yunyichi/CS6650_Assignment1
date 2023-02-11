@@ -1,5 +1,8 @@
 package org.example;
-
+/**
+ * Single thread
+ * By Yunyi Chi
+ * */
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
 import io.swagger.client.api.SwipeApi;
@@ -8,10 +11,13 @@ import io.swagger.client.model.SwipeDetails;
 import java.util.concurrent.CountDownLatch;
 
 public class SingleThread implements Runnable{
-    private static final String baseUrl = "http://54.201.34.108:8080/hw1_server_war/";
+    private static final String baseUrl = "http://44.202.188.179:8080/hw1_server_war/";
+//    private static final String baseUrl = "http://localhost:8080/hw1_server_war_exploded/";
     private DataGeneration dataGeneration;
     private CountDownLatch completed;
     private CountData countData;
+
+    private static final int MAXREQUEST= 5000;
     private static final int maxTry = 5;
     public SingleThread(DataGeneration dataGeneration, CountDownLatch completed, CountData countData) {
         this.dataGeneration = dataGeneration;
@@ -25,21 +31,26 @@ public class SingleThread implements Runnable{
         apiInstance.getApiClient().setBasePath(baseUrl);
         SwipeDetails body = dataGeneration.generateBody();
         String leftOrRight = dataGeneration.generateLeftOrRight();
-//        int i = 0;
-        for (int i = 0; i < maxTry; i++) {
-            try {
-                ApiResponse res = apiInstance.swipeWithHttpInfo(body, leftOrRight);
-                System.out.println(res.getStatusCode());
-                countData.incNumOfSuccessfulRequest();
-                break;
-            } catch (ApiException e) {
-//                System.err.println("Exception when calling SwipeApi#swipe");
-                if (i == maxTry-1) {
-                    countData.incNumOfFailedRequest();
+        int success = 0;
+        int fail = 0;
+        int count = 0;
+        while (count < MAXREQUEST) {
+            for (int i = 0; i < maxTry; i++) {
+                try {
+                    ApiResponse res = apiInstance.swipeWithHttpInfo(body, leftOrRight);
+                    success++;
+                    break;
+                } catch (ApiException e) {
+                    if (i == maxTry - 1) {
+                        fail++;
+                    }
                 }
             }
+            count++;
+            completed.countDown();
         }
-        completed.countDown();
+        countData.incNumOfSuccessfulRequest(success);
+        countData.incNumOfFailedRequest(fail);
 
     }
 }

@@ -1,67 +1,78 @@
 package org.example;
 
+/**
+ * Count Data for Client1
+ * By Yunyi Chi
+ * */
+
+import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CountData {
-    private int numOfSuccessfulRequest;
-    private long startTime = 0;
-    private long endTime = 0;
-    private int numOfFailedRequest;
-    private long totalRunTime;
+    private AtomicInteger numOfSuccessfulRequest;
+    private AtomicLong startTime;
+    private AtomicLong endTime;
+    private AtomicInteger numOfFailedRequest;
+    private AtomicLong totalRunTime;
     private double throughput;
 
     public CountData() {
-        this.numOfSuccessfulRequest = 0;
-        this.numOfFailedRequest = 0;
-        this.totalRunTime = 0;
-        this.throughput = 0;
-        this.startTime = 0;
-        this.endTime = 0;
+        this.numOfSuccessfulRequest = new AtomicInteger(0);
+        this.startTime = new AtomicLong(0);
+        this.endTime = new AtomicLong(0);
+        this.numOfFailedRequest = new AtomicInteger(0);
+        this.totalRunTime = new AtomicLong(0);
+        this.throughput = 0.0;
     }
 
-    public long getStartTime() {
+    public AtomicLong getStartTime() {
         return startTime;
     }
 
-    public long getEndTime() {
+    public AtomicLong getEndTime() {
         return endTime;
     }
 
-    public void setStartTime(long startTime) {
+    public void setStartTime(AtomicLong startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(long endTime) {
+    public void setEndTime(AtomicLong endTime) {
         this.endTime = endTime;
     }
 
-    public int getNumOfSuccessfulRequest() {
+    public AtomicInteger getNumOfSuccessfulRequest() {
         return numOfSuccessfulRequest;
     }
 
-    public void incNumOfSuccessfulRequest() {
-        numOfSuccessfulRequest += 1;
+    public void incNumOfSuccessfulRequest(int val) {
+        numOfSuccessfulRequest.addAndGet(val);
     }
 
-    public int getNumOfFailedRequest() {
+    public AtomicInteger getNumOfFailedRequest() {
         return numOfFailedRequest;
     }
 
-    public void incNumOfFailedRequest() {
-        numOfFailedRequest += 1;
+    public void incNumOfFailedRequest(int val) {
+        numOfFailedRequest.addAndGet(val);
     }
 
-    public long getTotalRunTime() {
+    public AtomicLong getTotalRunTime() {
         return totalRunTime;
     }
 
     public void calculateTotalRunTime() {
-        this.totalRunTime = this.endTime - this.startTime;
+        this.totalRunTime.set(this.endTime.get() - this.startTime.get());
     }
 
 
     public void calculateThroughput() {
-        this.throughput = (numOfSuccessfulRequest + numOfFailedRequest) / ((totalRunTime*1.0)/1000);
+        double temp = (numOfSuccessfulRequest.get() + numOfFailedRequest.get()) / ((totalRunTime.get()*1.0)/1000);
+        BigDecimal bd = new BigDecimal(temp);
+        this.throughput = bd.setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
+
     }
     public double getThroughput() {
         return throughput;
